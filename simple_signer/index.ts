@@ -21,7 +21,7 @@ const types: any = {
         { name: "auditor", type: "Auditor" },
         { name: "issuedAt", type: "uint256" },
         { name: "ercs", type: "uint256[]" },
-        { name: "contract", type: "Contract" },
+        { name: "contractData", type: "Contract" },
         { name: "auditHash", type: "bytes32" },
         { name: "auditUri", type: "string" }
     ],
@@ -32,7 +32,7 @@ const types: any = {
     ],
     Contract: [
         { name: "chainId", type: "uint256" },
-        { name: "address", type: "address" }
+        { name: "contractAddress", type: "address" }
     ]
 };
 

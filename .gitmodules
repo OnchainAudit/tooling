@@ -1,3 +1,6 @@
 [submodule "onchain_audit_registry/lib/forge-std"]
 	path = onchain_audit_registry/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "onchain_audit_registry/lib/openzeppelin-contracts"]
+	path = onchain_audit_registry/lib/openzeppelin-contracts
+	url = https://github.com/OpenZeppelin/openzeppelin-contracts
