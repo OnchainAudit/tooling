@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Typed Data with MetaMask</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+            background-color: #f4f4f4;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"],
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        input[type="file"],
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .field-group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .field-group input[type="text"] {
+            flex: 3;
+            /* Increase the flex value to allocate more space to the input field */
+            margin-right: 10px;
+        }
+
+        .field-group button {
+            flex: 1;
+            /* Decrease the flex value to allocate less space to the button */
+            padding: 5px 10px;
+            /* Adjust padding for the button */
+        }
+
+        .group {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .group button {
+            width: auto;
+            margin-left: 10px;
+        }
+
+        .container {
+            margin-bottom: 20px;
+        }
+
+        .container:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+</head <body>
+<form id="auditForm">
+    <input type="text" id="auditorName" placeholder="Auditor Name" required>
+    <input type="text" id="auditorUri" placeholder="Auditor URI" required>
+    <input type="text" id="auditUri" placeholder="Audit URI" required>
+
+    <div class="container" id="authorsContainer">
+        <!-- Author fields will be added here dynamically -->
+    </div>
+    <button type="button" onclick="addAuthorField(event)">Add Author</button>
+
+    <div class="container" id="ercContainer">
+        <!-- ERC fields will be added here dynamically -->
+    </div>
+    <button type="button" onclick="addErcField()">Add ERC</button>
+
+    <input type="text" id="contractAddress" placeholder="Contract Address" required>
+    <input type="text" id="chainId" placeholder="Chain ID" required>
+    <input type="file" id="pdfFile" accept=".pdf" required>
+    <button type="button" onclick="signData()">Sign Data</button>
+</form>
+
+<script>
+    function displayError(input, message) {
+        // Check if an error message is already displayed
+        let errorElement = input.parentNode.querySelector('.error-message');
+        if (!errorElement) {
+            errorElement = document.createElement('span');
+            errorElement.className = 'error-message';
+            errorElement.style.color = 'red';
+            errorElement.style.marginLeft = '10px';
+            input.parentNode.appendChild(errorElement);
+        }
+        errorElement.textContent = message;
+    }
+    function validateForm() {
+    const form = document.getElementById('auditForm');
+    let isValid = true;
+
+    // Iterate over all input fields in the form
+    const inputs = form.querySelectorAll('input');
+    inputs.forEach(input => {
+        // If the input is invalid or empty, add a red border
+        if (!input.validity.valid || input.value.trim() === '') {
+            input.style.border = '2px solid red';
+            isValid = false;
+        } else {
+            input.style.border = ''; // Reset border for valid inputs
+            // Remove error message if it exists
+            const errorElement = input.parentNode.querySelector('.error-message');
+            if (errorElement) {
+                errorElement.remove();
+            }
+        }
+    });
+
+    // Validate URI
+    const uriInputs = form.querySelectorAll('input[type="text"][placeholder*="URI"]');
+    uriInputs.forEach(uriInput => {
+        const uriPattern = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/;
+        if (!uriPattern.test(uriInput.value)) {
+            uriInput.style.border = '2px solid red';
+            displayError(uriInput, 'Invalid URI');
+            isValid = false;
+        }
+    });
+
+    // Validate Ethereum Address
+    const ethAddressInput = document.getElementById('contractAddress');
+    const ethAddressPattern = /^0x[a-fA-F0-9]{40}$/;
+    if (!ethAddressPattern.test(ethAddressInput.value)) {
+        ethAddressInput.style.border = '2px solid red';
+        displayError(ethAddressInput, 'Invalid Ethereum Address');
+        isValid = false;
+    }
+
+    if (!isValid) {
+        alert('Please fill out all required fields correctly.');
+        return false;
+    }
+    return true;
+}
+
+
+    let authorCount = 0;
+
+    function addAuthorField(event) {
+        event.preventDefault();
+        const authorsContainer = document.getElementById('authorsContainer');
+
+        // Create a div to group the input and the remove button
+        const authorDiv = document.createElement('div');
+        authorDiv.className = 'author-group field-group';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'author-input';
+        input.placeholder = 'Author ' + authorCount;
+
+        const removeButton = document.createElement('button');
+        removeButton.innerText = 'Remove';
+        removeButton.onclick = function () {
+            removeAuthorField(authorDiv);
+        };
+        input.className = 'remove-author-button';
+
+
+        authorDiv.appendChild(input);
+        authorDiv.appendChild(removeButton);
+        authorsContainer.appendChild(authorDiv);
+
+        authorCount++;
+    }
+
+    function removeAuthorField(authorDiv) {
+        authorDiv.remove();
+    }
+
+    let ercCount = 0;
+
+    function addErcField() {
+        const ercContainer = document.getElementById('ercContainer');
+
+        // Create a div to group the input and the remove button
+        const groupDiv = document.createElement('div');
+        groupDiv.className = 'erc-group field-group';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'erc-input'; // Use class instead of id for multiple elements with the same purpose
+        input.placeholder = 'ERC ' + ercCount;
+
+        const removeButton = document.createElement('button');
+        removeButton.innerText = 'Remove';
+        removeButton.onclick = function () {
+            removeErcField(groupDiv);
+        };
+
+        groupDiv.appendChild(input);
+        groupDiv.appendChild(removeButton);
+        ercContainer.appendChild(groupDiv);
+
+        ercCount++;
+    }
+
+    function removeErcField(groupDiv) {
+        groupDiv.remove();
+    }
+    // Define the EIP-712 Domain
+    const domain = {
+        name: "ERC-7652: Onchain Audit Representation",
+        version: "1.0"
+    };
+
+    // Define the EIP-712 Types
+    const types = {
+        EIP712Domain: [
+            { name: "name", type: "string" },
+            { name: "version", type: "string" },
+        ],
+        AuditSummary: [
+            { name: "auditor", type: "Auditor" },
+            { name: "issuedAt", type: "uint256" },
+            { name: "ercs", type: "uint256[]" },
+            { name: "contract", type: "Contract" },
+            { name: "auditHash", type: "bytes32" },
+            { name: "auditUri", type: "string" }
+        ],
+        Auditor: [
+            { name: "name", type: "string" },
+            { name: "uri", type: "string" },
+            { name: "authors", type: "string[]" }
+        ],
+        Contract: [
+            { name: "chainId", type: "uint256" },
+            { name: "address", type: "address" }
+        ]
+    };
+
+
+
+    async function signData() {
+        if (!validateForm()) {
+            return;
+        }
+        if (typeof window.ethereum !== 'undefined') {
+            const accounts = await ethereum.request({ method: 'eth_requestAccounts' });
+            const signer = accounts[0];
+
+            const typedData = {
+                types: types,
+                domain: domain,
+                primaryType: 'AuditSummary',
+                message: {
+                    auditor: {
+                        name: document.getElementById('auditorName').value,
+                        uri: document.getElementById('auditorUri').value,
+                        authors: Array.from(document.querySelectorAll('.author-input')).map(input => input.value)
+
+                    },
+                    issuedAt: Date.now(),
+                    ercs: Array.from(document.querySelectorAll('.erc-input')).map(input => parseInt(input.value)),
+                    contract: {
+                        chainId: parseInt(document.getElementById('chainId').value),  // Assuming Ethereum Mainnet. Change this if you're using a different network.
+                        address: document.getElementById('contractAddress').value
+                    },
+                    auditHash: await computePdfHash(),
+                    auditUri: document.getElementById('auditUri').value
+                }
+            };
+
+
+            const signature = await ethereum.request({
+                method: 'eth_signTypedData_v4',
+                params: [signer, JSON.stringify(typedData)],
+                from: signer,
+            });
+
+            console.log('Signature:', signature);
+        } else {
+            alert('Please install MetaMask!');
+        }
+    }
+
+    async function computePdfHash() {
+        const fileInput = document.getElementById('pdfFile');
+        const file = fileInput.files[0];
+        const fileBuffer = await file.arrayBuffer();
+        const fileHash = ethers.utils.keccak256(new Uint8Array(fileBuffer));
+        return fileHash;
+    }
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.0/ethers.umd.min.js"></script>
+</body>
+
+</html>
