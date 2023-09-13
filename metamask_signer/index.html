@@ -242,7 +242,8 @@
             { name: "auditor", type: "Auditor" },
             { name: "issuedAt", type: "uint256" },
             { name: "ercs", type: "uint256[]" },
-            { name: "contractData", type: "Contract" },
+            { name: "chainId", type: "uint256" },
+            { name: "contractAddress", type: "address" },
             { name: "auditHash", type: "bytes32" },
             { name: "auditUri", type: "string" }
         ],
@@ -251,10 +252,6 @@
             { name: "uri", type: "string" },
             { name: "authors", type: "string[]" }
         ],
-        Contract: [
-            { name: "chainId", type: "uint256" },
-            { name: "contractAddress", type: "address" }
-        ]
     };
 
 
@@ -280,10 +277,8 @@
                     },
                     issuedAt: Date.now(),
                     ercs: Array.from(document.querySelectorAll('.erc-input')).map(input => parseInt(input.value)),
-                    contract: {
-                        chainId: parseInt(document.getElementById('chainId').value),  // Assuming Ethereum Mainnet. Change this if you're using a different network.
-                        address: document.getElementById('contractAddress').value
-                    },
+                    chainId: parseInt(document.getElementById('chainId').value),  // Assuming Ethereum Mainnet. Change this if you're using a different network.
+                    contractAddress: document.getElementById('contractAddress').value,
                     auditHash: await computePdfHash(),
                     auditUri: document.getElementById('auditUri').value
                 }

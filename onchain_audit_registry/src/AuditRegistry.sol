@@ -10,9 +10,8 @@ contract AuditRegistry is Ownable, EIP712 {
     error BadSignatureVersion();
 
     bytes32 public constant AUDIT_SUMMARY_TYPEHASH =
-        keccak256("AuditSummary(Auditor auditor,uint256 issuedAt,uint256[] ercs,Contract contractData,bytes32 auditHash,string auditUri)");
+        keccak256("AuditSummary(Auditor auditor,uint256 issuedAt,uint256[] ercs,uint256 chainId,address contractAddress,bytes32 auditHash,string auditUri)");
     bytes32 public constant AUDITOR_TYPEHASH = keccak256("Auditor(string name,string uri,string[] authors)");
-    bytes32 public constant CONTRACT_TYPEHASH = keccak256("Contract(uint256 chainId,address contractAddress)");
         
     struct Auditor {
         string name;
@@ -20,22 +19,18 @@ contract AuditRegistry is Ownable, EIP712 {
         string[] authors;
     }
 
-    struct Contract {
-        bytes32 chainId;
-        address contractAddress;
-    }
-
     struct AuditSummary {
         Auditor auditor;
         uint256 issuedAt;
         uint256[] ercs;
-        Contract contractData;
+        uint256 chainId;
+        address contractAddress;
         bytes32 auditHash;
         string auditUri;
     }
 
-    string public constant NAME = "Audit Registry";
-    string public constant VERSION = "1";
+    string public constant NAME = "ERC-7652: Onchain Audit Representation";
+    string public constant VERSION = "1.0";
 
     mapping(address => bool) public auditorsWhitelist;
 
@@ -82,7 +77,8 @@ contract AuditRegistry is Ownable, EIP712 {
             _hashAuditor(_auditSummary.auditor),
             _auditSummary.issuedAt,
             keccak256(abi.encodePacked(_auditSummary.ercs)),
-            _hashContract(_auditSummary.contractData),
+            _auditSummary.chainId,
+            _auditSummary.contractAddress,
             _auditSummary.auditHash,
             keccak256(bytes(_auditSummary.auditUri))
         ));
@@ -100,14 +96,6 @@ contract AuditRegistry is Ownable, EIP712 {
             keccak256(bytes(_auditor.name)),
             keccak256(bytes(_auditor.uri)),
             keccak256(abi.encodePacked(authors))
-        ));
-    }
-
-    function _hashContract(Contract calldata _contract) internal pure returns (bytes32) {
-        return keccak256(abi.encode(
-            CONTRACT_TYPEHASH,
-            _contract.chainId,
-            _contract.contractAddress
         ));
     }
 
