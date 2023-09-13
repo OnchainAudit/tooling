@@ -1,6 +1,6 @@
 # MetaMask Typed Data Signer
 
-This project provides a simple HTML interface to interact with MetaMask for signing typed data according to the EIP-712 standard.
+This project provides a simple HTML interface to interact with MetaMask for signing typed data according to the EIP-7512 standard.
 
 ## Features
 

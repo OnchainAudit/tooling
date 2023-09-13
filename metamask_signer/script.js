@@ -1,6 +1,6 @@
 // Constants
 const DOMAIN = {
-    name: "ERC-7652: Onchain Audit Representation",
+    name: "ERC-7512: Onchain Audit Representation",
     version: "1.0"
 };
 
