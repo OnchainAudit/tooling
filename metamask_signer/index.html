@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Typed Data with MetaMask</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <form id="auditForm">
+        <input type="text" id="auditorName" placeholder="Auditor Name" required>
+        <input type="text" id="auditorUri" placeholder="Auditor URI" required>
+        <input type="text" id="auditUri" placeholder="Audit URI" required>
+
+        <div class="container" id="authorsContainer">
+            <!-- Author fields will be added here dynamically -->
+        </div>
+        <button type="button" onclick="addAuthorField(event)">Add Author</button>
+
+        <div class="container" id="ercContainer">
+            <!-- ERC fields will be added here dynamically -->
+        </div>
+        <button type="button" onclick="addErcField()">Add ERC</button>
+
+        <input type="text" id="contractAddress" placeholder="Contract Address" required>
+        <input type="text" id="chainId" placeholder="Chain ID" required>
+        <input type="file" id="pdfFile" accept=".pdf" required>
+        <button type="button" onclick="signData()">Sign Data</button>
+        <input type="text" id="signatureField" readonly>
+    </form>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.0/ethers.umd.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
