@@ -13,7 +13,8 @@ const TYPES = {
         { name: "auditor", type: "Auditor" },
         { name: "issuedAt", type: "uint256" },
         { name: "ercs", type: "uint256[]" },
-        { name: "contract", type: "Contract" },
+        { name: "chainId", type: "uint256" },
+        { name: "contractAddress", type: "address" },
         { name: "auditHash", type: "bytes32" },
         { name: "auditUri", type: "string" }
     ],
@@ -22,10 +23,6 @@ const TYPES = {
         { name: "uri", type: "string" },
         { name: "authors", type: "string[]" }
     ],
-    Contract: [
-        { name: "chainId", type: "uint256" },
-        { name: "address", type: "address" }
-    ]
 };
 
 let authorCount = 0;
@@ -183,10 +180,8 @@ async function constructTypedData() {
             },
             issuedAt: Date.now(),
             ercs: Array.from(document.querySelectorAll('.erc-input')).map(input => parseInt(input.value)),
-            contract: {
-                chainId: parseInt(document.getElementById('chainId').value),
-                address: document.getElementById('contractAddress').value
-            },
+            chainId: parseInt(document.getElementById('chainId').value),
+            contractAddress: document.getElementById('contractAddress').value,
             auditHash: await computePdfHash(),
             auditUri: document.getElementById('auditUri').value
         }

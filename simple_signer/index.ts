@@ -21,7 +21,8 @@ const types: any = {
         { name: "auditor", type: "Auditor" },
         { name: "issuedAt", type: "uint256" },
         { name: "ercs", type: "uint256[]" },
-        { name: "contract", type: "Contract" },
+        { name: "chainId", type: "uint256" },
+        { name: "contractAddress", type: "address" },
         { name: "auditHash", type: "bytes32" },
         { name: "auditUri", type: "string" }
     ],
@@ -30,10 +31,6 @@ const types: any = {
         { name: "uri", type: "string" },
         { name: "authors", type: "string[]" }
     ],
-    Contract: [
-        { name: "chainId", type: "uint256" },
-        { name: "address", type: "address" }
-    ]
 };
 
 // Convert chain ID to bytes32 format
@@ -51,10 +48,8 @@ const auditSummaryData = {
     },
     issuedAt: Date.now(),
     ercs: [20, 721],
-    contract: {
-        chainId: 1,
-        address: "0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e"
-    },
+    chainId: 1,
+    contractAddress: "0x0bc529c00c6401aef6d220be8c6ea1667f6ad93e",
     auditHash: toBytes32(23),
     auditUri: "https://auditwebsite.com/report"
 };
