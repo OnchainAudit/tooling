@@ -5,6 +5,6 @@ This repository provides tooling related to creating and verifying onchain audit
 The following features are planned:
 
 - [x] SDK to create audit summary struct and trigger signing
-- [ ] Base contracts to verify signed audit summary
+- [x] Base contracts to verify signed audit summary
 - [x] Example webapp to create a signed audit summary with connected wallet
 - [ ] Example contract that allow verifying audit summaries for registered auditors and query supported ercs
